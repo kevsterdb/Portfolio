@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ceballos Test Run</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE plain and specific: a student's portfolio that states what he does and shows the work
+   IDEA a test report: each project is a test case you can open
+   PICTURE the test run panel itself, at the top, already complete; one rerun button replays it
+   COLOUR pale ice ground, dark ink, greys; ONE bright pink moment: the "6 of 6 passed" result and its bar
+   TYPE IBM Plex Sans for everything, IBM Plex Mono only inside test names
+   LAYOUT left-aligned throughout, spacing on a 4px grid, square-ish 4px corners, no centred blocks */
+:root{color-scheme:light dark;--bg:light-dark(#e6f2f6,#08202b);--ink:light-dark(#08202b,#e6f2f6);--soft:light-dark(#46606b,#9bb9c4);--panel:light-dark(#ffffff,#0d2b38);--rule:light-dark(#c4dbe3,#1d4252);--hot:#ff2e7e}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
+a{color:inherit;text-underline-offset:4px}
+.band{padding-block:clamp(32px,4vw,64px);padding-left:max(5vw,16px);padding-right:max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2,h3{font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:clamp(32px,4.8vw,52px);max-width:20ch}
+h2{font-size:clamp(24px,3.2vw,36px);margin-bottom:24px}
+h3{font-size:20px;margin-bottom:8px}
+p{margin:0 0 12px;max-width:64ch}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--rule)}
+nav .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:4px 24px;padding:12px max(5vw,16px)}
+.logo{font-weight:700;font-size:20px;text-decoration:none;margin-right:auto}
+nav ul{display:flex;flex-wrap:wrap;gap:0 20px;list-style:none;margin:0;padding:0}
+nav ul a{text-decoration:none;color:var(--soft);font-weight:600;padding:12px 0;display:inline-block}
+nav ul a:hover{color:var(--ink)}
+
+.hero .top{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px 48px;align-items:end;margin-bottom:32px}
+@media(max-width:760px){.hero .top{grid-template-columns:minmax(0,1fr)}}
+.lede{font-size:18px;color:var(--soft)}
+.name{font-weight:600;font-size:18px;margin-bottom:12px}
+.intro{display:grid;grid-template-columns:112px minmax(0,1fr);gap:20px;align-items:start}
+.me{width:112px;height:auto;border-radius:4px;display:block;filter:saturate(.9)}
+@media(max-width:420px){.intro{grid-template-columns:minmax(0,1fr)}}
+.bg{border-top:1px solid var(--rule)}
+.bggrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 48px}
+@media(max-width:760px){.bggrid{grid-template-columns:minmax(0,1fr)}}
+.entries{list-style:none;margin:0;padding:0}
+.entries li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:12px 0;border-top:1px solid var(--rule)}
+.entries b{font-weight:600}
+.entries small{display:block;color:var(--soft);font-size:15px}
+.entries time{color:var(--soft);font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.others{margin-top:40px}
+.interests{margin-top:32px;padding-top:16px;border-top:1px solid var(--rule)}
+.main-btn{display:inline-flex;align-items:center;min-height:48px;padding:0 24px;border-radius:4px;background:var(--ink);color:var(--bg);font-weight:700;text-decoration:none;border:0;font-size:16px;cursor:pointer;font-family:inherit}
+.text-btn{background:none;border:0;padding:12px 0;font:600 15px "IBM Plex Sans",sans-serif;color:var(--ink);text-decoration:underline;text-underline-offset:4px;cursor:pointer;min-height:44px}
+.text-btn:disabled{color:var(--soft);cursor:progress}
+
+/* runner */
+.runner{background:var(--panel);border:1px solid var(--rule);border-radius:4px}
+.rhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;padding:16px 24px;border-bottom:1px solid var(--rule)}
+.result{font-weight:700;font-size:20px;margin-right:auto}
+.result mark{background:var(--hot);color:#fff;padding:4px 8px;border-radius:4px;font-variant-numeric:tabular-nums}
+.bar{height:4px;background:var(--rule)}
+.bar i{display:block;height:100%;width:100%;background:var(--hot);transition:width .3s linear}
+.rows{list-style:none;margin:0;padding:0}
+.rows li+li details{border-top:1px solid var(--rule)}
+.rows summary{list-style:none;display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:16px;align-items:start;padding:16px 24px;cursor:pointer}
+.rows summary::-webkit-details-marker{display:none}
+.rows summary:hover .pname{text-decoration:underline}
+.st{width:24px;height:24px;margin-top:4px}
+.st svg{width:24px;height:24px;display:block}
+.spin{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pname{font-weight:700;font-size:17px;display:block}
+.tname{font:400 14px/1.5 "IBM Plex Mono",ui-monospace,monospace;color:var(--soft);overflow-wrap:anywhere}
+.tstate{font-size:14px;font-weight:600;white-space:nowrap;color:var(--soft);margin-top:4px}
+.more{font-size:14px;color:var(--soft);white-space:nowrap}
+details[open] .more{display:none}
+.detail{padding:0 24px 20px 64px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px 32px}
+.detail ul{margin:0;padding-left:20px}
+.detail li{margin:4px 0}
+.detail dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:15px}
+.detail dt{color:var(--soft)}
+.detail dd{margin:0}
+@media(max-width:600px){.rows summary{grid-template-columns:24px minmax(0,1fr);padding:16px}.tstate{grid-column:2;margin-top:0}.detail{grid-template-columns:minmax(0,1fr);padding:0 16px 20px 56px}.rhead{padding:16px}}
+.note{font-size:14px;color:var(--soft);margin-top:12px}
+
+/* process */
+.how{border-top:1px solid var(--rule)}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;list-style:none;margin:0;padding:0}
+@media(max-width:900px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.steps{grid-template-columns:minmax(0,1fr)}}
+.steps li{border-top:1px solid var(--ink);padding-top:16px}
+.steps p{color:var(--soft);font-size:15px}
+.steps em{font-style:normal;color:var(--ink);font-weight:600}
+
+.skills{border-top:1px solid var(--rule)}
+.sk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}
+@media(max-width:900px){.sk{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.sk{grid-template-columns:minmax(0,1fr)}}
+.sk p{color:var(--soft);font-size:15px}
+
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}
+@media(max-width:760px){.two{grid-template-columns:minmax(0,1fr)}}
+.about{border-top:1px solid var(--rule)}
+.contact-list{list-style:none;padding:0;margin:0 0 24px}
+.contact-list li{display:grid;grid-template-columns:7em minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--rule)}
+.contact-list b{font-weight:600}
+.contact-list span{overflow-wrap:anywhere}
+footer{border-top:1px solid var(--rule);font-size:14px;color:var(--soft)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="var(--ink)"/><path d="M7 12.5l3.5 3.5 6.5-7.5" fill="none" stroke="var(--panel)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="wait" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="var(--rule)" stroke-width="2"/></symbol>
+  <symbol id="running" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="var(--rule)" stroke-width="2"/><path d="M12 2a10 10 0 0 1 10 10" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/></symbol>
+</svg>
+
+<nav aria-label="Main">
+  <div class="wrap">
+    <a class="logo" href="#top">Kevin Ceballos</a>
+    <ul>
+      <li><a href="#run">Projects</a></li>
+      <li><a href="#background">Background</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="band hero" id="top">
+  <div class="wrap top">
+    <div>
+      <p class="name">Kevin Josh A. Ceballos</p>
+      <h1>I test software and build Android, web and desktop apps.</h1>
+    </div>
+    <div class="intro">
+      <img class="me" src="me.jpg" width="112" height="105" alt="Kevin Josh Ceballos">
+      <div>
+        <p class="lede">Third-year BS Information Technology student at the University of Cebu, Banilad. I build Android, web and desktop apps and test them, from written test plans to automated tests with Playwright.</p>
+        <a class="main-btn" href="#contact">Contact me</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap runner" id="run">
+    <div class="rhead">
+      <div class="result" aria-live="polite"><mark id="passed">7 of 7</mark> projects passed</div>
+      <button class="text-btn" id="runBtn" type="button">Run it again</button>
+    </div>
+    <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+    <ul class="rows" id="rows"></ul>
+  </div>
+  <p class="wrap note">Each project is written as a test case. Open one to see what it does and the tools behind it.</p>
+  <div class="wrap others">
+    <h3>Smaller projects</h3>
+    <ul class="entries">
+      <li><span><b>SlimeGame</b><small>A dungeon game: play as a slime, find keys and fight enemies.</small></span><time>Java</time></li>
+      <li><span><b>Money Converter</b><small>Converts amounts between currencies.</small></span><time>C#</time></li>
+    </ul>
+  </div>
+</header>
+
+<section class="band bg" id="background">
+  <div class="wrap bggrid">
+    <div>
+      <h2>Education</h2>
+      <ul class="entries">
+        <li><span><b>BS Information Technology, third year</b><small>University of Cebu, Banilad Campus</small></span><time>Current</time></li>
+        <li><span><b>Pre-baccalaureate (Senior High)</b><small>University of Cebu, Maritime Education and Training Center</small></span><time>2022</time></li>
+        <li><span><b>Grades 7 to 10</b><small>University of San Jose–Recoletos</small></span><time>2019</time></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Experience</h2>
+      <ul class="entries">
+        <li><span><b>Lithan Academy</b><small>Singapore</small></span><time>2023–2024</time></li>
+      </ul>
+      <h2 style="margin-top:40px">Certifications</h2>
+      <ul class="entries">
+        <li><span><b>CCNA course completion</b><small>Cisco Networking Academy</small></span><time>2026</time></li>
+        <li><span><b>IBM SkillsBuild certificate</b><small>IBM</small></span><time>2026</time></li>
+        <li><span><b>Ignite Program certificate</b><small>Wadhwani Foundation</small></span><time>2026</time></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Achievements</h2>
+      <ul class="entries">
+        <li><span><b>Top 14 of 210, Grade 12 graduating class</b><small>University of Cebu, METC</small></span><time>2022</time></li>
+        <li><span><b>3rd place, spelling bee</b><small>University of Cebu, METC</small></span><time>2021</time></li>
+        <li><span><b>Most Improved Student of the Year</b><small>University of San Jose–Recoletos</small></span><time>2019</time></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="band skills" id="skills">
+  <div class="wrap">
+    <h2>Skills</h2>
+    <div class="sk">
+      <div><h3>Languages</h3><p>Java, C#, Python and Kotlin.</p></div>
+      <div><h3>Testing</h3><p>Test plans, test case design, manual and functional testing, bug reports, and automated browser tests with Playwright.</p></div>
+      <div><h3>Data analysis</h3><p>Python with pandas, NumPy, Matplotlib and seaborn.</p></div>
+      <div><h3>Mobile</h3><p>Kotlin, XML layouts and Android Studio, from Park It and ServeTogether.</p></div>
+      <div><h3>Design</h3><p>Wireframes, mobile mockups and prototypes in Figma, from the EcoRoute AI mobile app.</p></div>
+      <div><h3>Networking</h3><p>Cisco Packet Tracer and basic network configuration, from Cisco Networking Academy.</p></div>
+      <div><h3>Web &amp; tools</h3><p>ASP.NET, Git, GitHub, Visual Studio, VS Code, IntelliJ, Eclipse, Android Studio.</p></div>
+      <div><h3>Communication</h3><p>Technical writing, documentation, research, pitching and cross-team work.</p></div>
+    </div>
+    <p class="interests"><b>Interested in:</b> quality assurance and test automation, Android development, data analysis and back-end development.</p>
+  </div>
+</section>
+
+<section class="band about" id="about">
+  <div class="wrap two">
+    <div>
+      <h2>About me</h2>
+      <p>I like the part of a project most people skip: checking whether it actually works. Besides testing, I design interfaces and help build features.</p>
+      <p>Bobathon at the University of Cebu is my first hackathon. I'm on team Vibe Coders as the testing and quality person.</p>
+    </div>
+    <div id="contact">
+      <h2>Contact</h2>
+      <ul class="contact-list">
+        <li><b>Email</b><span><a href="mailto:c.kevinceballos@gmail.com">c.kevinceballos@gmail.com</a></span></li>
+        <li><b>Based in</b><span>Cebu City, Philippines</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="band">
+  <div class="wrap">
+    <span>&copy; 2026 Kevin Josh A. Ceballos</span>
+    <span>Hand-written HTML, CSS and JavaScript</span>
+  </div>
+</footer>
+
+<script>
+{
+  const T = [
+    {p:"EcoRoute AI", t:"tracks garbage trucks live and predicts waste data with AI", role:"Mobile UI designer", type:"Group system",
+     did:["Live route tracking for garbage trucks","Records waste collection data and uses AI to predict it","I designed the mobile version and worked with another group's testers"], tools:"C#, ASP.NET"},
+    {p:"Park It", t:"shows available parking spots live", role:"Developer", type:"Android app",
+     did:["Live parking locator for drivers, with a separate flow for parking personnel","Built screens from wireframes, starting with role selection and login","Based on our research proposal for Case Study 16"], tools:"Kotlin, XML, Android Studio", repo:"https://github.com/kevsterdb/ParkIt"},
+    {p:"ServeTogether", t:"lets barangays and organizations sign up volunteers", type:"Android app",
+     did:["Volunteer application app for barangays and community organizations","Built as a native Android app"], tools:"Kotlin, Android Studio"},
+    {p:"ImageScanner", t:"extracts text and numbers from an image", type:"Desktop app",
+     did:["Scans an image and pulls out its text and numbers"], tools:"C#"},
+    {p:"Carousell clone", t:"recreates a marketplace web app", type:"Academic project",
+     did:["An academic imitation of the Carousell buy-and-sell web app","Rebuilt its marketplace features as a learning exercise"], tools:"C#"},
+    {p:"KaraOOKE", t:"scores how well you sing a chosen song", type:"Karaoke app",
+     did:["Pick a song, sing along and get a score rating"], tools:"Java"},
+    {p:"LibraHub test plan", t:"writes a test plan for another team's system", role:"Tester", type:"Coursework",
+     did:["Wrote the test scope, test cases and expected results","Reviewed the system from a user's point of view"], tools:"Test plan document"}
+  ];
+  const rows = document.getElementById('rows');
+  const icon = s => `<svg class="${s==='running'?'spin':''}"><use href="#${s}"/></svg>`;
+  rows.innerHTML = T.map((x,i)=>`
+    <li><details>
+      <summary>
+        <span class="st" id="st${i}">${icon('ok')}</span>
+        <span><span class="pname">${x.p}</span><span class="tname">it ${x.t}</span></span>
+        <span class="tstate" id="ss${i}">Passed <span class="more">· open</span></span>
+      </summary>
+      <div class="detail">
+        <ul>${x.did.map(d=>`<li>${d}</li>`).join('')}</ul>
+        <dl>
+          ${x.role?`<dt>Role</dt><dd>${x.role}</dd>`:''}
+          <dt>Type</dt><dd>${x.type}</dd>
+          <dt>Tools</dt><dd>${x.tools}</dd>
+          ${x.repo?`<dt>Code</dt><dd><a href="${x.repo}">GitHub repo</a></dd>`:''}
+        </dl>
+      </div>
+    </details></li>`).join('');
+
+  const passed = document.getElementById('passed');
+  const bar = document.getElementById('barFill');
+  const btn = document.getElementById('runBtn');
+  const setRow = (i,s) => {
+    document.getElementById('st'+i).innerHTML = icon(s);
+    document.getElementById('ss'+i).innerHTML = s==='ok' ? 'Passed <span class="more">· open</span>' : s==='running' ? 'Running' : 'Queued';
+  };
+  const fast = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  btn.addEventListener('click', () => {
+    btn.disabled = true;
+    T.forEach((_,i)=>setRow(i,'wait'));
+    passed.textContent = `0 of ${T.length}`; bar.style.width = '0%';
+    let i = 0;
+    const step = () => {
+      if (i >= T.length) { btn.disabled = false; return; }
+      setRow(i,'running');
+      setTimeout(() => {
+        setRow(i,'ok'); i++;
+        passed.textContent = `${i} of ${T.length}`;
+        bar.style.width = (i/T.length*100) + '%';
+        step();
+      }, fast ? 40 : 480);
+    };
+    step();
+  });
+}
+</script>
+</body>
+</html>
